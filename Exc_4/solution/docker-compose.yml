@@ -1,0 +1,29 @@
+networks:
+  ordernet:
+
+volumes:
+  order-volume:
+
+services:
+  order-db:
+    image: postgres:18
+    networks:
+      - ordernet
+    ports:
+      - "5432:5432"
+    env_file:
+      - "debug.env"
+    volumes:
+      - order-volume:/var/lib/postgresql/data
+
+  order-service:
+    build: .
+    networks:
+      - ordernet
+    ports:
+      - "3000:3000"
+    command: [ "/app/ordersystem" ]
+    env_file:
+      - "debug.env"
+    depends_on:
+      - order-db
